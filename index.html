@@ -555,7 +555,7 @@ function renderSummary(){
     <div class="steps">
       <h3>Send it to the instructor</h3>
       <ol>
-        <li><b>Save as PDF</b> — tap below, then in the print dialog choose <b>\u201cSave as PDF\u201d</b> as the destination.</li>
+        <li><b>Save as PDF</b> — tap below, then in the print dialog choose <b>\u201cSave as PDF\u201d</b> as the destination. If nothing happens when you tap it, this browser cannot print \u2014 use <b>Copy my answers as text</b> instead.</li>
         <li><b>Email</b> — tap <b>Email to instructor</b>. Your mail app opens with the address and subject filled in.</li>
         <li><b>Attach</b> the PDF you just saved (phones can't attach it automatically), then send.</li>
       </ol>
@@ -563,6 +563,7 @@ function renderSummary(){
 
     <div class="actions">
       <button class="btn primary block" id="pdf">Save as PDF</button>
+      <button class="btn ghost block" id="copy">Copy my answers as text</button>
       <button class="btn ghost block" id="mail">Email to instructor</button>
       <button class="btn ghost block" id="edit">\u2039 Back to edit answers</button>
       <a class="btn ghost block" href="#" style="text-decoration:none; display:block">Done — all quizzes</a>
@@ -570,11 +571,78 @@ function renderSummary(){
     <div class="foot">Instructor reveals every answer in the debrief. &nbsp;·&nbsp; AIC-TRN-EOL1-QZ</div>`;
 
   const bar=document.getElementById('bar'); if(bar) bar.remove();
-  document.getElementById('pdf').addEventListener('click', ()=>window.print());
+  document.getElementById('pdf').addEventListener('click', ()=>{
+    try{
+      if(typeof window.print!=='function'){ throw new Error('no print'); }
+      let fired=false;
+      const mark=()=>{fired=true;};
+      window.addEventListener('beforeprint',mark,{once:true});
+      window.print();
+      setTimeout(()=>{
+        window.removeEventListener('beforeprint',mark);
+        if(!fired) showPrintFallback();
+      },1200);
+    }catch(e){ showPrintFallback(); }
+  });
+  const cp=document.getElementById('copy'); if(cp) cp.addEventListener('click', copyResult);
   document.getElementById('mail').addEventListener('click', sendMail);
   document.getElementById('edit').addEventListener('click', ()=>{ state.submittedAt=null; renderQuiz(); window.scrollTo(0,0); });
   window.scrollTo(0,0);
 }
+function resultText(){
+  const q=meta(state.quiz), when=fmtTime(state.submittedAt||new Date());
+  const rows=BANK[state.quiz].map((it,i)=>{
+    const a=state.answers[i];
+    return '  '+String(i+1)+'. '+it[0]+'  ->  '+(a?a:'-');
+  }).join('\n');
+  return 'EOL Line 1 workshop \u2014 answer sheet\n'
+    +'Name: '+state.name+'\n'
+    +'Quiz: '+q.title+' ('+q.code+')\n'
+    +'Submitted: '+when+'\n'
+    +'Answered: '+answeredCount()+'/'+BANK[state.quiz].length+'\n\n'
+    +rows+'\n';
+}
+
+function copyResult(){
+  const txt=resultText(), btn=document.getElementById('copy');
+  const ok=function(){ if(btn){ const o=btn.textContent; btn.textContent='Copied \u2014 now paste it into e-mail or LINE'; setTimeout(function(){btn.textContent=o;},3500);} };
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(txt).then(ok, function(){ legacyCopy(txt,ok); });
+  } else { legacyCopy(txt,ok); }
+}
+
+function legacyCopy(txt,ok){
+  const ta=document.createElement('textarea');
+  ta.value=txt; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.top='-1000px';
+  document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0,txt.length);
+  let done=false; try{ done=document.execCommand('copy'); }catch(e){}
+  document.body.removeChild(ta);
+  if(done){ ok(); } else { showTextBox(txt); }
+}
+
+function showTextBox(txt){
+  const host=document.querySelector('.actions'); if(!host) return;
+  if(document.getElementById('rawbox')) return;
+  const d=document.createElement('div'); d.id='rawbox';
+  d.style.cssText='margin-top:14px;padding:12px;border:1px solid #d8d5ce;border-radius:8px;background:#faf9f7';
+  d.innerHTML='<div style="font:600 13px/1.4 system-ui;margin-bottom:8px">Select all of the text below, copy it, and paste it into an e-mail or a LINE message.</div>';
+  const ta=document.createElement('textarea');
+  ta.readOnly=true; ta.value=txt;
+  ta.style.cssText='width:100%;height:190px;font:12px/1.5 ui-monospace,Menlo,Consolas,monospace;border:1px solid #d8d5ce;border-radius:6px;padding:8px;background:#fff';
+  d.appendChild(ta); host.appendChild(d);
+  ta.focus(); ta.select();
+}
+
+function showPrintFallback(){
+  const host=document.querySelector('.actions'); if(!host) return;
+  if(document.getElementById('pfb')) return;
+  const d=document.createElement('div'); d.id='pfb';
+  d.style.cssText='margin-top:12px;padding:12px 14px;border:1px solid #efdcb4;background:#fdf4e3;border-radius:8px;font:14px/1.55 system-ui;color:#3b4149';
+  d.innerHTML='<b>This browser cannot print.</b> That normally means the page was opened inside another application, such as LINE or Facebook.<br><br>Either open this page in Chrome or Safari and try again, or use <b>Copy my answers as text</b> above and paste the result into an e-mail.';
+  host.appendChild(d);
+  showTextBox(resultText());
+}
+
 function sendMail(){
   const q=meta(state.quiz), when=fmtTime(state.submittedAt||new Date());
   const subject=`[EOL1 Quiz] ${q.code} — ${state.name}`;
