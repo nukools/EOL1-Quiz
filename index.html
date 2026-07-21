@@ -206,35 +206,6 @@
 
   /* ---------- print / PDF ---------- */
 
-  /* ---------- worksheets ---------- */
-  .wsrow{border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:10px; background:#fff}
-  .wsrow .sec{font-family:var(--mono); font-size:12px; font-weight:700; color:var(--red)}
-  .wsrow .req{font-size:14px; font-weight:600; margin:3px 0 9px}
-  .wsrow .sig{font-family:var(--mono); font-size:12.5px; font-weight:700; word-break:break-all}
-  .wsrow .ref{font-size:12px; color:var(--mute); margin:2px 0 9px}
-  .wsin{width:100%; box-sizing:border-box; font:15px/1.45 var(--sans); color:var(--ink);
-        border:1px solid var(--line); border-radius:8px; padding:9px 10px; background:#fff}
-  .wsin:focus{outline:2px solid #d42027; outline-offset:1px}
-  textarea.wsin{min-height:64px; resize:vertical}
-  .wslab{font-size:11.5px; font-weight:700; color:var(--mute); letter-spacing:.04em;
-         text-transform:uppercase; margin:0 0 5px}
-  .wsgrid{display:grid; gap:8px; margin-bottom:10px}
-  .wschips{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px}
-  .wschip{font-family:var(--mono); font-size:12px; font-weight:700; padding:7px 11px; border-radius:999px;
-          border:1px solid var(--line); background:#fff; color:var(--ink); cursor:pointer}
-  .wschip.on{background:#17191c; border-color:#17191c; color:#fff}
-  .wslegend{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px}
-  .wslegend div{border:1px solid var(--line); border-radius:8px; padding:8px 10px; background:#faf9f7}
-  .wslegend b{font-family:var(--mono); font-size:12.5px; display:block}
-  .wslegend span{font-size:11.5px; color:var(--mute)}
-  .wsfault{font-family:var(--mono); font-size:13px; font-weight:700; color:var(--red);
-           letter-spacing:.08em; margin:20px 0 8px}
-  .wsstep{display:flex; gap:10px; align-items:flex-start}
-  .wsstep .n{flex:0 0 26px; height:26px; border-radius:999px; background:#17191c; color:#fff;
-             font-family:var(--mono); font-size:12px; font-weight:700; display:flex;
-             align-items:center; justify-content:center; margin-top:2px}
-  .wssave{font-size:12px; color:var(--mute); text-align:right; margin:-4px 0 10px}
-
   @media print{
     @page{margin:14mm}
     body{background:#fff}
@@ -423,7 +394,6 @@ function fmtTime(d){
 function route(){
   const h = (location.hash||'').replace(/^#\/?/,'').toLowerCase();
   if(BANK[h]){ startQuiz(h); }
-  else if(WS[h]){ startWs(h); }
   else { renderIndex(); }
   window.scrollTo(0,0);
 }
@@ -447,8 +417,6 @@ function renderIndex(){
       <p>Pick the quiz your instructor names for each module. Each module quiz is your ticket into that lab.</p>
     </div>
     <div class="grid">${cards}</div>
-    <div class="lead" style="margin-top:26px"><h1 style="font-size:22px">Lab worksheets</h1><p>Open the sheet your instructor names at the start of each lab. Everything you type is kept on this device.</p></div>
-    <div class="grid">${WSLIST.map(id=>{const w=WS[id];return `<a class="card" href="#${id}"><div class="code">${esc(w.code)}</div><div class="cbody"><div class="ct">${esc(w.title)}</div><div class="cs">${esc(w.mod)}</div></div><div class="go">\u203a</div></a>`;}).join('')}</div>
     <div class="idxnote"><b>On your laptop:</b> answer the items, tap <b>Finish</b>, then <b>Save as PDF</b> or <b>Copy my answers as text</b> and send it to the instructor. You don't see the correct answers here — we go through every answer together in the debrief.</div>
     <div class="foot">AUTO INNOVATE CONSTRUCTION CO., LTD. &nbsp;·&nbsp; AIC-TRN-EOL1-QZ &nbsp;·&nbsp; Rev 0.1</div>`;
 }
@@ -693,141 +661,6 @@ Attached is my answer sheet for the EOL Line 1 workshop.
   location.href = `mailto:${INSTRUCTOR_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
-
-/* ================= WORKSHEETS ================= */
-const WS = {"ws1": {"code": "WS1", "mod": "Module 1", "title": "Find the standard inside the program", "lead": "Read each rule, then find where it lives in the EOL Line 1 project. Write the name you find — a program, a routine, a tag or a module.", "foot": "Twelve rules, twelve addresses. Once you can do this without the worksheet, a section number is a direct route to a routine.", "kind": "pairs", "colA": "What the standard requires", "colB": "Where it is in EOL Line 1", "rows": [["§5.4", "One program per functional section"], ["§5.3", "The operations manager has no run modes"], ["§8.3", "One continuous task runs the machine animation"], ["§10.2", "R003 is fault surveillance"], ["§10.2", "R005 is the functional section GEMMA"], ["§16.2", "The GEMMA is a Michelin automation function"], ["§22.2", "One fault array per stop type"], ["§22.6", "One summary bit per stop type"], ["§19.1", "The routine call-up order"], ["§22.1", "A data-management routine per program"], ["§12.2", "Module names follow a fixed syntax"], ["§14.1", "Grafcets are not built with autonaming"]]}, "ws2": {"code": "WS2", "mod": "Module 2", "title": "From a tag to the device in the cabinet", "lead": "Choose three tags from the project. For each one, work outwards until you could point at the physical device in the cabinet.", "foot": "Worked example, already in the shipped program — I_TH_CUTTER_MOTOR · EN2T_2_POINT_12_AENTR:34:I.5 · card E54.5 · device 1081Q9 · TRUE means the thermal is healthy.", "kind": "grid", "cols": ["Tag name", "Alias for", "Card . bit", "Device no.", "What TRUE means"], "n": 3, "tail": {"label": "Now redirect one alias to the wrong channel. The project accepts the change without any error. What told you — or would have told you — that the address was wrong?"}}, "ws3": {"code": "WS3", "mod": "Module 3", "title": "Classify each fault by how severely it stops the machine", "lead": "Place each signal in exactly one array — or decide that it is not a fault at all. The reason matters more than the answer, so write it down.", "foot": "Not every signal on this sheet belongs in a fault array. §16.1 and §20 decide, not preference.", "kind": "signals", "legend": [["AITHE", "immediate, total, no energy left"], ["AITEE", "immediate, total, power retained"], ["ADT", "deferred, whole section"], ["ADP", "deferred, one sub-system"]], "rows": [["I_TH_CUTTER_MOTOR", "[E54.5] 1081Q9 cutter motor thermal protection"], ["I_TH_CUTTER_INLET_CONVEYOR_BELT", "[E11.5] 1079Q9 inlet cutter conveyor belt thermal protection"], ["I_CUTTER_MOTOR_INVERTER_FAULT", "[E54.3] 1082A5 cutter motor inverter fault"], ["I_INLET_CUTTER_CONV_INVERTER_FAULT", "[E11.6] 1079A5 inlet cutter conveyor belt inverter fault"], ["I_CUTTER_MOTOR_INVERTER_ALARM", "[E54.4] 1082A5 cutter motor inverter alarm"], ["I_PB_INLET_CUTTER_ZONE_EMERGENCY_STOP", "[E30.0] 75S11 +P2 inlet cutter zone emergency stop"]], "choices": ["AITHE", "AITEE", "ADT", "ADP", "not a fault"]}, "ws4": {"code": "WS4", "mod": "Module 6", "title": "The playbook", "lead": "Two faults. Six questions each, always in this order. Never start at the rungs — the mode already knows why it stopped.", "foot": "Finish by writing what you would go and do, not by fixing it.", "kind": "playbook", "steps": [["MODE", "What state is the section in?", "R005 — the GEMMA"], ["STOP TYPE", "How severe? Total or partial?", "AITHE  AITEE  ADT  ADP"], ["FAULT BIT", "Which array has a bit set?", "R003_BD_*"], ["TAG", "Which signal is behind it?", "read the description"], ["AOI", "Which block reported it?", "Faulted · FaultCode"], ["CABINET", "Which device, which drawing page?", "the schematic"]]}};
-const WSLIST = ['ws1','ws2','ws3','ws4'];
-const wstate = { id:null, v:{} };
-
-function wsKey(id){ return 'eol1.ws.'+id; }
-function wsLoad(id){
-  try{ const r=localStorage.getItem(wsKey(id)); return r?JSON.parse(r):{}; }catch(e){ return {}; }
-}
-function wsSave(){
-  try{ localStorage.setItem(wsKey(wstate.id), JSON.stringify(wstate.v)); }catch(e){}
-  const s=document.getElementById('wssave'); if(s){ s.textContent='Saved on this device'; }
-}
-function wsSet(k,val){ wstate.v[k]=val; wsSave(); }
-
-function field(k, ph, area){
-  const v = esc(wstate.v[k]||'');
-  return area
-    ? '<textarea class="wsin" data-k="'+k+'" placeholder="'+esc(ph||'')+'">'+v+'</textarea>'
-    : '<input class="wsin" data-k="'+k+'" value="'+v+'" placeholder="'+esc(ph||'')+'">';
-}
-
-function startWs(id){
-  wstate.id=id; wstate.v=wsLoad(id); state.quiz=null;
-  const w=WS[id];
-  let body='';
-
-  if(w.kind==='pairs'){
-    body = w.rows.map((r,i)=>
-      '<div class="wsrow"><div class="sec">'+esc(r[0])+'</div>'
-      +'<div class="req">'+esc(r[1])+'</div>'
-      +'<div class="wslab">'+esc(w.colB)+'</div>'+field('r'+i,'program, routine, tag or module')+'</div>').join('');
-  }
-
-  if(w.kind==='grid'){
-    let rows='';
-    for(let i=0;i<w.n;i++){
-      rows += '<div class="wsrow"><div class="sec">TAG '+(i+1)+'</div><div class="wsgrid">'
-        + w.cols.map((c,j)=>'<div><div class="wslab">'+esc(c)+'</div>'+field('t'+i+'c'+j,'')+'</div>').join('')
-        + '</div></div>';
-    }
-    body = rows + '<div class="wsrow"><div class="req">'+esc(w.tail.label)+'</div>'+field('tail','',true)+'</div>';
-  }
-
-  if(w.kind==='signals'){
-    body = '<div class="wslegend">'+w.legend.map(l=>'<div><b>'+esc(l[0])+'</b><span>'+esc(l[1])+'</span></div>').join('')+'</div>'
-      + w.rows.map((r,i)=>{
-        const cur = wstate.v['a'+i]||'';
-        const chips = w.choices.map(c=>'<button type="button" class="wschip'+(cur===c?' on':'')+'" data-chip="a'+i+'" data-val="'+esc(c)+'">'+esc(c)+'</button>').join('');
-        return '<div class="wsrow"><div class="sig">'+esc(r[0])+'</div><div class="ref">'+esc(r[1])+'</div>'
-          +'<div class="wslab">Array</div><div class="wschips">'+chips+'</div>'
-          +'<div class="wslab">Why — in your own words</div>'+field('w'+i,'',true)+'</div>';
-      }).join('');
-  }
-
-  if(w.kind==='playbook'){
-    body = ['A','B'].map(f=>
-      '<div class="wsfault">FAULT '+f+'</div>'
-      + w.steps.map((s,i)=>
-        '<div class="wsrow"><div class="wsstep"><div class="n">'+(i+1)+'</div><div style="flex:1">'
-        +'<div class="req" style="margin-bottom:2px">'+esc(s[0])+' — '+esc(s[1])+'</div>'
-        +'<div class="ref">'+esc(s[2])+'</div>'
-        +field(f+i,'what you found')+'</div></div></div>').join('')
-      + '<div class="wsrow"><div class="req">What would you go and do about it?</div>'+field(f+'act','',true)+'</div>'
-    ).join('');
-  }
-
-  $app.innerHTML =
-    '<div class="lead"><div class="k">'+esc(w.code)+' · '+esc(w.mod)+'</div>'
-    +'<h1>'+esc(w.title)+'</h1><p>'+esc(w.lead)+'</p></div>'
-    +'<div class="wsrow" style="background:#faf9f7"><div class="wslab">Your name</div>'+field('name','')+'</div>'
-    +'<div class="wssave" id="wssave">Answers are kept on this device as you type</div>'
-    + body
-    +'<div class="wsrow" style="background:#faf9f7"><div class="ref" style="margin:0">'+esc(w.foot)+'</div></div>'
-    +'<div class="actions">'
-    +'<button class="btn primary block" id="wscopy">Copy my worksheet as text</button>'
-    +'<button class="btn ghost block" id="wsclear">Clear this worksheet</button>'
-    +'<a class="btn ghost block" href="#" style="text-decoration:none; display:block">‹ Back to all sheets</a>'
-    +'</div>'
-    +'<div class="foot">AIC-TRN-EOL1-'+esc(w.code)+'</div>';
-
-  const bar=document.getElementById('bar'); if(bar) bar.remove();
-  $app.querySelectorAll('.wsin').forEach(el=>{
-    el.addEventListener('input', ()=>wsSet(el.dataset.k, el.value));
-  });
-  $app.querySelectorAll('.wschip').forEach(b=>{
-    b.addEventListener('click', ()=>{
-      const k=b.dataset.chip;
-      wsSet(k, wstate.v[k]===b.dataset.val ? '' : b.dataset.val);
-      $app.querySelectorAll('.wschip[data-chip="'+k+'"]').forEach(x=>
-        x.classList.toggle('on', x.dataset.val===wstate.v[k]));
-    });
-  });
-  document.getElementById('wscopy').addEventListener('click', wsCopy);
-  document.getElementById('wsclear').addEventListener('click', ()=>{
-    if(!confirm('Clear every answer on this worksheet?')) return;
-    try{ localStorage.removeItem(wsKey(wstate.id)); }catch(e){}
-    startWs(wstate.id);
-  });
-}
-
-function wsText(){
-  const w=WS[wstate.id], v=wstate.v, L=[];
-  L.push('EOL Line 1 workshop — '+w.code+' '+w.title);
-  L.push('Name: '+(v.name||'-'));
-  L.push('Time: '+fmtTime(new Date()));
-  L.push('');
-  if(w.kind==='pairs') w.rows.forEach((r,i)=>L.push('  '+r[0]+'  '+r[1]+'\n      -> '+(v['r'+i]||'-')));
-  if(w.kind==='grid'){
-    for(let i=0;i<w.n;i++){
-      L.push('  TAG '+(i+1));
-      w.cols.forEach((c,j)=>L.push('    '+c+': '+(v['t'+i+'c'+j]||'-')));
-    }
-    L.push(''); L.push('  What told you the address was wrong:'); L.push('    '+(v.tail||'-'));
-  }
-  if(w.kind==='signals') w.rows.forEach((r,i)=>{
-    L.push('  '+r[0]); L.push('    array : '+(v['a'+i]||'-')); L.push('    why   : '+(v['w'+i]||'-'));
-  });
-  if(w.kind==='playbook') ['A','B'].forEach(f=>{
-    L.push('  FAULT '+f);
-    w.steps.forEach((s,i)=>L.push('    '+(i+1)+'. '+s[0]+': '+(v[f+i]||'-')));
-    L.push('    action: '+(v[f+'act']||'-')); L.push('');
-  });
-  return L.join('\n')+'\n';
-}
-
-function wsCopy(){
-  const txt=wsText(), btn=document.getElementById('wscopy');
-  const ok=function(){ if(btn){ const o=btn.textContent; btn.textContent='Copied — paste it into e-mail or LINE';
-    setTimeout(function(){btn.textContent=o;},3500);} };
-  if(navigator.clipboard && window.isSecureContext){
-    navigator.clipboard.writeText(txt).then(ok, function(){ legacyCopy(txt,ok); });
-  } else { legacyCopy(txt,ok); }
-}
 
 /* ================= GO ================= */
 route();
