@@ -243,14 +243,14 @@ const SHOW_AUTOSCORE    = true;   // show learner an aggregate MCQ score (no per
 
 /* ================= QUIZ META ================= */
 const QUIZZES = [
-  {id:"pre",  code:"PRE",  kick:"Baseline check",           title:"Pre-test",                        sub:"16 items across all topics — this sets your starting point. Answer what you can; guessing is fine.", chips:["16 items","~15 min","MCQ + 2 short"]},
+  {id:"pre",  code:"PRE",  kick:"Baseline check",           title:"Pre-test",                        sub:"15 items across all topics — this sets your starting point. Answer what you can; guessing is fine.", chips:["15 items","~15 min","MCQ + 2 short"]},
   {id:"m1",   code:"M1",   kick:"Ticket into Lab 1",         title:"Architecture — why ST-395 & mapping", sub:"Pass this to unlock Lab 1. 5 items on the program skeleton and why the standard exists.", chips:["5 items","Ticket → Lab 1"]},
   {id:"m2",   code:"M2",   kick:"Ticket into Lab 2",         title:"Tags & Data",                     sub:"Pass this to unlock Lab 2. 5 items on decoding tag names and electrical references.", chips:["5 items","Ticket → Lab 2"]},
   {id:"m3",   code:"M3",   kick:"Ticket into Lab 3",         title:"GEMMA & fault stop types",        sub:"Pass this to unlock Lab 3. 5 items on run/stop modes and the four stop types.", chips:["5 items","Ticket → Lab 3"]},
   {id:"m4",   code:"M4",   kick:"Ticket into Lab 4",         title:"Add-On Instructions",             sub:"Pass this to unlock Lab 4. 8 items on actuator AOIs, why they exist, and where each one lives.", chips:["8 items","Ticket → Lab 4"]},
   {id:"m5",   code:"M5",   kick:"Ticket into Lab 5",         title:"Grafcet / SFC",                   sub:"Pass this to unlock Lab 5. 5 items on steps, transitions and sync rules.", chips:["5 items","Ticket → Lab 5"]},
   {id:"m6",   code:"M6",   kick:"Ticket into Lab 6",         title:"Diagnostics & playbook",          sub:"Pass this to unlock Lab 6. 5 items on the troubleshooting order and system diagnostics.", chips:["5 items","Ticket → Lab 6"]},
-  {id:"post", code:"POST", kick:"Growth check",              title:"Post-test",                       sub:"Same 16 items as the pre-test — taken at the end of the day to measure how far you've come.", chips:["16 items","same as pre-test"]},
+  {id:"post", code:"POST", kick:"Growth check",              title:"Post-test",                       sub:"Same 15 items as the pre-test — taken at the end of the day to measure how far you've come.", chips:["15 items","same as pre-test"]},
 ];
 
 /* ================= ITEM BANK ================= */
@@ -265,7 +265,7 @@ const PRE = [
   M("PP-2","mcq","What is ST-395 — in one sentence?","ST-395 คืออะไร (สรุปเป็นประโยคเดียว)?",
     [["A","a Michelin fault-code catalogue"],["B","a Rockwell Studio 5000 software module"],["C","Michelin's standard for HOW to structure a PLC program"],["D","the machine's electrical-drawing standard"]],"C"),
   M("PP-3","mcq","The rule 'one program per functional section' shows up in EOL 1 as which set of programs?","กฎ '1 program ต่อ 1 functional section' ปรากฏใน EOL 1 เป็นชุดโปรแกรมใด?",
-    [["A","P01_Inlet · P02_Stacker · P03_Press · P04_Conveyor"],["B","R100_G_Press · R104_G_STK1 · R105_G_STK2"],["C","P00_ComPart · MainProgram · Velox"],["D","MainTask · DiagnosticSystem · Cyclical_5ms"]],"A"),
+    [["A","P01_Inlet · P02_Stacker · P03_Press · P04_Conveyor"],["B","R100a_G_Cutter · R104_G_STK1 · R105_G_STK2"],["C","P00_ComPart · MainProgram · Velox"],["D","MainTask · DiagnosticSystem · Cyclical_5ms"]],"A"),
   M("PP-4","mcq","In every functional section, which function does routine R005 contain?","ในทุก functional section — routine R005 บรรจุฟังก์ชันอะไร?",
     [["A","the GEMMA"],["B","movement-safety summary"],["C","fault surveillance"],["D","the output group"]],"A"),
   M("PP-5","mcq","In every functional section, which function does routine R003 contain?","ในทุก functional section — routine R003 บรรจุฟังก์ชันอะไร?",
@@ -301,7 +301,7 @@ const BANK = {
   M("M1-1","mcq · why","Why does Michelin enforce ST-395 on every machine program?","ทำไม Michelin ต้องบังคับใช้ ST-395 กับทุกเครื่อง?",
     [["A","So anyone trained can navigate any machine the same way"],["B","Because Studio 5000 enforces it at compile"],["C","To reduce the controller scan time"],["D","To cut the number of program tags"]],"A"),
   M("M1-2","mcq · linkage","The ST-395 rule 'one program per functional section' appears in EOL 1 as which set?","กฎ '1 program ต่อ 1 functional section' ปรากฏใน EOL 1 เป็นชุดใด?",
-    [["A","R100_G_Press · R104_G_STK1 · R105_G_STK2"],["B","P00_ComPart · MainProgram · DS_Diagnostic_System"],["C","MainTask · DiagnosticSystem · Cyclical_5ms"],["D","P01_Inlet · P02_Stacker · P03_Press · P04_Conveyor"]],"D"),
+    [["A","R100a_G_Cutter · R104_G_STK1 · R105_G_STK2"],["B","P00_ComPart · MainProgram · DS_Diagnostic_System"],["C","MainTask · DiagnosticSystem · Cyclical_5ms"],["D","P01_Inlet · P02_Stacker · P03_Press · P04_Conveyor"]],"D"),
   M("M1-3","mcq · routine","Which routine holds the GEMMA (run & stop modes)?","GEMMA (โหมด run/stop) อยู่ใน routine ไหน?",
     [["A","R003_Faults"],["B","R000_Fuction_Init"],["C","R007_Movement_Safety"],["D","R005_RunStop"]],"D"),
   O("M1-4","short · why",
@@ -344,7 +344,7 @@ const BANK = {
   M("M4-4","mcq · why","A Michelin AOI is encrypted, yet you can still troubleshoot it. Why?","AOI มาตรฐานถูกเข้ารหัส แต่ยัง troubleshoot ได้ เพราะอะไร?",
     [["A","its internal rungs open in read-only"],["B","Studio 5000 auto-decrypts Michelin AOIs"],["C","the source key is printed in the manual"],["D","all its input / output parameters stay visible"]],"D"),
   M("M4-5","mcq · where","Which routine contains the on/off actuator AOI calls (Cylinder / Motor)?","on/off actuator AOI (Cylinder/Motor) ถูกเรียกใน routine ใด?",
-    [["A","R040_G120C_WaterPump"],["B","R006_Outputs"],["C","R010_Analog_IO"],["D","R003_Faults"]],"B"),
+    [["A","R042_G120C_Cutter_1082A5"],["B","R006_Outputs"],["C","R010_Analog_IO"],["D","R003_Faults"]],"B"),
   M("M4-6","mcq · why","Why does Michelin build standard AOIs (Cylinder, Motor, RunStopMode…) instead of coding each device from scratch?","ทำไม Michelin สร้าง AOI มาตรฐาน แทนการเขียนคุมอุปกรณ์เองทุกตัว?",
     [["A","Reusable, with diagnostics & safety built in"],["B","To let the HMI read tags without aliases"],["C","To reduce controller memory use"],["D","To speed up the continuous-task scan"]],"A"),
   M("M4-7","mcq · where · ST-395","ST-395 §10.2 fixes what each routine is FOR — it never names an AOI. Applying that rule, which mapping is correct?","§10.2 กำหนด 'หน้าที่' ของแต่ละ routine (ไม่ได้ระบุชื่อ AOI) — เมื่อใช้กฎนั้น การจับคู่ใดถูก?",
